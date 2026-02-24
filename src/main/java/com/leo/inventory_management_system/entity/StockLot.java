@@ -1,6 +1,7 @@
 package com.leo.inventory_management_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -20,14 +21,15 @@ public class StockLot {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "batch_code", nullable = false, unique = true)
+    @Column(name = "batch_code", nullable = false)
     @Size(max = 100)
     private String batchCode;
 
-    @Column(name = "expiry_date")
+    @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
     @Column(nullable = false)
+    @Min(0)
     private int quantity;
 
     @Column(name = "created_at")

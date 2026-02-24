@@ -1,6 +1,7 @@
 package com.leo.inventory_management_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "stock_movement_lots")
@@ -19,6 +20,7 @@ public class StockMovementLot {
     private StockLot lot;
 
     @Column(nullable = false)
+    @Min(1)
     private int quantity;
 
     public StockMovementLot(){}

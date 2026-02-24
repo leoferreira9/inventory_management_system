@@ -2,6 +2,7 @@ package com.leo.inventory_management_system.entity;
 
 import com.leo.inventory_management_system.enums.MovementType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class StockMovement {
     private Product product;
 
     @Column(nullable = false)
+    @Min(1)
     private int quantity;
 
     @Column(name = "occurred_at")
