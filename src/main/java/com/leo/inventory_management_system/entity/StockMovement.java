@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "stock_movements")
 public class StockMovement {
 
     @Id
@@ -24,6 +25,7 @@ public class StockMovement {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(name = "occurred_at")
     private LocalDateTime occurredAt;
 
     @Size(max = 150)
@@ -32,6 +34,7 @@ public class StockMovement {
     @Size(max = 50)
     private String reference;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     public StockMovement(){}

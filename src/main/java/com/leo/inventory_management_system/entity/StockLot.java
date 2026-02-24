@@ -7,6 +7,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "stock_lots", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"product_id", "batch_code"})
+})
 public class StockLot {
 
     @Id
@@ -17,17 +20,17 @@ public class StockLot {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "batch_code", nullable = false, unique = true)
     @Size(max = 100)
     private String batchCode;
 
-    @Column(nullable = false)
+    @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
     @Column(nullable = false)
     private int quantity;
 
-
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     public StockLot() {}

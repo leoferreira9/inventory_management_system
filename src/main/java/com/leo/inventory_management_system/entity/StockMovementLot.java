@@ -3,6 +3,7 @@ package com.leo.inventory_management_system.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "stock_movement_lots")
 public class StockMovementLot {
 
     @Id
