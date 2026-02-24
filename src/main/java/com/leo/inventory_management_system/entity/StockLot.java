@@ -11,9 +11,9 @@ public class StockLot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
@@ -32,7 +32,7 @@ public class StockLot {
 
     public StockLot() {}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

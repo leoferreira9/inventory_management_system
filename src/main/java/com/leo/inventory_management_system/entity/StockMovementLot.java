@@ -7,9 +7,9 @@ public class StockMovementLot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "movement_id", nullable = false)
     private StockMovement movement;
 
@@ -22,7 +22,7 @@ public class StockMovementLot {
 
     public StockMovementLot(){}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

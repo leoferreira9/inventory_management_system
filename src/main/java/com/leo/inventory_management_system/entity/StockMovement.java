@@ -4,7 +4,6 @@ import com.leo.inventory_management_system.enums.MovementType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,7 +11,7 @@ public class StockMovement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -25,7 +24,7 @@ public class StockMovement {
     @Column(nullable = false)
     private int quantity;
 
-    private LocalDate occurredAt;
+    private LocalDateTime occurredAt;
 
     @Size(max = 150)
     private String reason;
@@ -37,7 +36,7 @@ public class StockMovement {
 
     public StockMovement(){}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -65,11 +64,11 @@ public class StockMovement {
         this.quantity = quantity;
     }
 
-    public LocalDate getOccurredAt() {
+    public LocalDateTime getOccurredAt() {
         return occurredAt;
     }
 
-    public void setOccurredAt(LocalDate occurredAt) {
+    public void setOccurredAt(LocalDateTime occurredAt) {
         this.occurredAt = occurredAt;
     }
 
