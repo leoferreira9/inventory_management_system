@@ -27,7 +27,7 @@ public class StockMovement {
     @Min(1)
     private int quantity;
 
-    @Column(name = "occurred_at")
+    @Column(name = "occurred_at", nullable = false)
     private LocalDateTime occurredAt;
 
     @Size(max = 150)
