@@ -26,7 +26,7 @@ create table stock_movements (
     type ENUM("IN", "OUT", "ADJUST") NOT NULL,
     product_id BIGINT NOT NULL,
     quantity INT NOT NULL CHECK(quantity > 0),
-    occurred_at DATETIME,
+    occurred_at DATETIME NOT NULL,
     reason VARCHAR(150),
     reference VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
