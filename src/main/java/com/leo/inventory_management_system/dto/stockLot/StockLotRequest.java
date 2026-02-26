@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class StockLotRequest {
 
@@ -23,8 +22,6 @@ public class StockLotRequest {
     @NotNull
     @Min(0)
     private int quantity;
-
-    private LocalDateTime createdAt;
 
     public StockLotRequest(){}
 
@@ -58,13 +55,5 @@ public class StockLotRequest {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

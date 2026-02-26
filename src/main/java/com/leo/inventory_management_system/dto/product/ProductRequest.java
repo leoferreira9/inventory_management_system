@@ -3,7 +3,6 @@ package com.leo.inventory_management_system.dto.product;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class ProductRequest {
 
@@ -24,11 +23,7 @@ public class ProductRequest {
     private String sku;
 
     @NotNull
-    private boolean active;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    private Boolean active;
 
     public ProductRequest(){}
 
@@ -64,27 +59,11 @@ public class ProductRequest {
         this.sku = sku;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

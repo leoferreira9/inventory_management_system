@@ -25,9 +25,6 @@ public class StockMovementRequest {
 
     private String reference;
 
-    @NotNull
-    private LocalDateTime createdAt;
-
     public StockMovementRequest(){}
 
     public MovementType getType() {
@@ -76,13 +73,5 @@ public class StockMovementRequest {
 
     public void setReference(String reference) {
         this.reference = reference;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }
