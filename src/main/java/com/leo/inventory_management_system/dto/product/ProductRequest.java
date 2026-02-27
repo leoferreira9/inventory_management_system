@@ -22,9 +22,6 @@ public class ProductRequest {
     @Size(max = 40)
     private String sku;
 
-    @NotNull
-    private Boolean active;
-
     public ProductRequest(){}
 
     public String getName() {
@@ -57,13 +54,5 @@ public class ProductRequest {
 
     public void setSku(String sku) {
         this.sku = sku;
-    }
-
-    public Boolean isActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

@@ -30,7 +30,6 @@ public class ProductService {
         Product product = mapper.toEntity(request);
         product.setActive(true);
         product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedAt(LocalDateTime.now());
 
         Product savedProduct = repository.save(product);
         return mapper.toDto(savedProduct);
@@ -43,10 +42,5 @@ public class ProductService {
 
     public List<ProductResponse> findAll(){
         return repository.findAll().stream().map(mapper::toDto).toList();
-    }
-
-    public void delete(Long id){
-        Product product = findProductOrThrow(id);
-        repository.delete(product);
     }
 }
