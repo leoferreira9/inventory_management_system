@@ -12,4 +12,8 @@ public class UpdateProductStatusRequest {
     public Boolean getActive() {
         return active;
     }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }
