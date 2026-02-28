@@ -6,8 +6,11 @@ import com.leo.inventory_management_system.dto.product.UpdateProductRequest;
 import com.leo.inventory_management_system.dto.product.UpdateProductStatusRequest;
 import com.leo.inventory_management_system.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,29 +23,37 @@ public class ProductController {
         this.service = service;
     }
 
-    @PostMapping("/create")
-    public ProductResponse create(@Valid @RequestBody ProductRequest request){
-        return service.create(request);
+    @PostMapping
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request){
+
+        ProductResponse productResponse = service.create(request);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(productResponse.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(productResponse);
     }
 
     @GetMapping
-    public List<ProductResponse> findAll(){
-        return service.findAll();
+    public ResponseEntity<List<ProductResponse>> findAll(){
+        return ResponseEntity.ok().body(service.findAll());
     }
 
-    @PatchMapping("/update/{id}/status")
-    public ProductResponse updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateProductStatusRequest request){
-        return service.updateStatus(id, request);
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ProductResponse> updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateProductStatusRequest request){
+        return ResponseEntity.ok().body(service.updateStatus(id, request));
     }
 
-    @PutMapping("/update/{id}")
-    public ProductResponse update(@PathVariable Long id, @Valid @RequestBody UpdateProductRequest request){
-        return service.update(id, request);
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody UpdateProductRequest request){
+        return ResponseEntity.ok().body(service.update(id, request));
     }
 
 
     @GetMapping("/{id}")
-    public ProductResponse findById(@PathVariable Long id){
-        return service.findById(id);
+    public ResponseEntity<ProductResponse> findById(@PathVariable Long id){
+        return ResponseEntity.ok().body(service.findById(id));
     }
 }
