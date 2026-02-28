@@ -2,6 +2,7 @@ package com.leo.inventory_management_system.service;
 
 import com.leo.inventory_management_system.dto.product.ProductRequest;
 import com.leo.inventory_management_system.dto.product.ProductResponse;
+import com.leo.inventory_management_system.dto.product.UpdateProductRequest;
 import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.exception.EntityNotFound;
 import com.leo.inventory_management_system.mapper.ProductMapper;
@@ -42,5 +43,18 @@ public class ProductService {
 
     public List<ProductResponse> findAll(){
         return repository.findAll().stream().map(mapper::toDto).toList();
+    }
+
+    public ProductResponse update(Long id, UpdateProductRequest request){
+        Product productExists = findProductOrThrow(id);
+
+        productExists.setName(request.getName());
+        productExists.setDescription(request.getDescription());
+        productExists.setPrice(request.getPrice());
+        productExists.setSku(request.getSku());
+        productExists.setUpdatedAt(LocalDateTime.now());
+
+        Product savedProduct = repository.save(productExists);
+        return mapper.toDto(savedProduct);
     }
 }
