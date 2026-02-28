@@ -63,6 +63,7 @@ public class ProductService {
         Product productExists = findProductOrThrow(id);
 
         productExists.setActive(request.getActive());
+        productExists.setUpdatedAt(LocalDateTime.now());
 
         Product savedProduct = repository.save(productExists);
         return mapper.toDto(savedProduct);
