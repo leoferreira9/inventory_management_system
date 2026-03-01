@@ -19,7 +19,7 @@ public class StockMovement {
     @Column(nullable = false)
     private MovementType type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
