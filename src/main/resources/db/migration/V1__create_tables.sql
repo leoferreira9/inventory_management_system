@@ -12,7 +12,8 @@ create table products (
 create table stock_lots (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     product_id BIGINT NOT NULL,
-    batch_code VARCHAR(100) NOT NULL UNIQUE,
+    batch_code VARCHAR(100) NOT NULL,
+    CONSTRAINT uk_product_batch UNIQUE (product_id, batch_code),
     expiry_date DATE NOT NULL,
     quantity INT NOT NULL CHECK(quantity >= 0),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
