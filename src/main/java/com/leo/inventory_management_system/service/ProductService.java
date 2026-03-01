@@ -69,8 +69,4 @@ public class ProductService {
         return mapper.toDto(savedProduct);
     }
 
-    public void delete(Long id){
-        Product productExists = findProductOrThrow(id);
-        repository.delete(productExists);
-    }
 }
