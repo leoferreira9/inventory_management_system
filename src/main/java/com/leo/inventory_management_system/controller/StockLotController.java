@@ -27,7 +27,7 @@ public class StockLotController {
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(response)
+                .buildAndExpand(response.getId())
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
