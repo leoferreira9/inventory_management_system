@@ -1,4 +1,4 @@
-package com.leo.inventory_management_system.dto.StockMovementLot;
+package com.leo.inventory_management_system.dto.stockMovementLot;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
