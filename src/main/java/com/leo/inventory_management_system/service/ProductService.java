@@ -24,7 +24,7 @@ public class ProductService {
         this.repository = repository;
     }
 
-    private Product findProductOrThrow(Long id){
+    public Product findProductOrThrow(Long id){
         return repository.findById(id).orElseThrow(() -> new EntityNotFound("Product not found with ID: " + id));
     }
 

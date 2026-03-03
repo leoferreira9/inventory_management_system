@@ -7,7 +7,6 @@ import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.exception.EntityNotFound;
 import com.leo.inventory_management_system.exception.FailedToCreateStockLot;
 import com.leo.inventory_management_system.mapper.StockLotMapper;
-import com.leo.inventory_management_system.repository.ProductRepository;
 import com.leo.inventory_management_system.repository.StockLotRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,24 +18,20 @@ public class StockLotService {
 
     private final StockLotMapper mapper;
     private final StockLotRepository repository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public StockLotService(StockLotMapper mapper, StockLotRepository repository, ProductRepository productRepository){
+    public StockLotService(StockLotMapper mapper, StockLotRepository repository, ProductService productService){
         this.mapper = mapper;
         this.repository = repository;
-        this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     private StockLot findStockLotOrThrow(Long id){
         return repository.findById(id).orElseThrow(() -> new EntityNotFound("Stock lot not found with ID: " + id));
     }
 
-    private Product findProductOrThrow(Long id){
-        return productRepository.findById(id).orElseThrow(() -> new EntityNotFound("Product not found with ID: " + id));
-    }
-
     public StockLotResponse create (StockLotRequest request){
-        Product productExists = findProductOrThrow(request.getProductId());
+        Product productExists = productService.findProductOrThrow(request.getProductId());
 
         if(request.getQuantity() < 0) throw new FailedToCreateStockLot("Stock lot quantity must be greater than or equal to zero");
 
