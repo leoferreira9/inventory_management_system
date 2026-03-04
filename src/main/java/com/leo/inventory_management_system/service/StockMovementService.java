@@ -11,6 +11,7 @@ import com.leo.inventory_management_system.exception.*;
 import com.leo.inventory_management_system.mapper.StockMovementMapper;
 import com.leo.inventory_management_system.repository.StockLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,15 +44,13 @@ public class StockMovementService {
             MovementType.ADJUST, EnumSet.of(MovementReason.ADJUSTMENT_IN, MovementReason.ADJUSTMENT_OUT)
     );
 
-    public void processEntry(StockMovementRequest request){
-        StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+    public void processEntry(StockMovementRequest request, StockLot stockLotExists){
         if(!stockLotExists.getProduct().getId().equals(request.getProductId())) throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
         increaseStock(request.getQuantity(), stockLotExists);
         stockLotRepository.save(stockLotExists);
     }
 
-    public void processExit(StockMovementRequest request){
-        StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+    public void processExit(StockMovementRequest request, StockLot stockLotExists){
         if(!stockLotExists.getProduct().getId().equals(request.getProductId())) throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
         decreaseStock(request.getQuantity(), stockLotExists);
         stockLotRepository.save(stockLotExists);
@@ -66,6 +65,7 @@ public class StockMovementService {
         stockLot.setQuantity(stockLot.getQuantity() - quantity);
     }
 
+    @Transactional
     public StockMovementResponse create(StockMovementRequest request){
         Product product = productService.findProductOrThrow(request.getProductId());
 
@@ -81,10 +81,12 @@ public class StockMovementService {
         stockMovement.setProduct(product);
         stockMovement.setCreatedAt(LocalDateTime.now());
 
+        StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+
         if(request.getType().equals(MovementType.IN)){
-            processEntry(request);
+            processEntry(request, stockLotExists);
         } else if (request.getType().equals(MovementType.OUT)){
-            processExit(request);
+            processExit(request, stockLotExists);
         }
 
         StockMovement savedStockMovement = repository.save(stockMovement);
