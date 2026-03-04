@@ -5,6 +5,7 @@ import com.leo.inventory_management_system.dto.stockMovement.StockMovementRespon
 import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.entity.StockMovement;
 import com.leo.inventory_management_system.exception.EntityNotFound;
+import com.leo.inventory_management_system.exception.InvalidDate;
 import com.leo.inventory_management_system.exception.QuantityUnavailable;
 import com.leo.inventory_management_system.mapper.StockMovementMapper;
 import com.leo.inventory_management_system.repository.StockMovementRepository;
@@ -33,7 +34,8 @@ public class StockMovementService {
     public StockMovementResponse create(StockMovementRequest request){
         Product product = productService.findProductOrThrow(request.getProductId());
 
-        if(request.getQuantity() < 0) throw new QuantityUnavailable("Stock movement quantity must be greater than or equal to zero");
+        if(request.getQuantity() <= 0) throw new QuantityUnavailable("Stock movement quantity must be greater than or equal to zero");
+        if(request.getOccurredAt().isAfter(LocalDateTime.now())) throw new InvalidDate("The date the event occurred cannot be later than the current date");
 
         StockMovement stockMovement = mapper.toEntity(request);
 
