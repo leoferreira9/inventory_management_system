@@ -1,5 +1,6 @@
 package com.leo.inventory_management_system.dto.stockMovement;
 
+import com.leo.inventory_management_system.enums.MovementReason;
 import com.leo.inventory_management_system.enums.MovementType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,8 @@ public class StockMovementRequest {
     @NotNull
     private LocalDateTime occurredAt;
 
-    private String reason;
+    @NotNull
+    private MovementReason reason;
 
     private String reference;
 
@@ -59,11 +61,11 @@ public class StockMovementRequest {
         this.occurredAt = occurredAt;
     }
 
-    public String getReason() {
+    public MovementReason getReason() {
         return reason;
     }
 
-    public void setReason(String reason) {
+    public void setReason(MovementReason reason) {
         this.reason = reason;
     }
 

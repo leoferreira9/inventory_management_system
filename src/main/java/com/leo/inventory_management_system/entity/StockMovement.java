@@ -1,5 +1,6 @@
 package com.leo.inventory_management_system.entity;
 
+import com.leo.inventory_management_system.enums.MovementReason;
 import com.leo.inventory_management_system.enums.MovementType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -30,8 +31,9 @@ public class StockMovement {
     @Column(name = "occurred_at", nullable = false)
     private LocalDateTime occurredAt;
 
-    @Size(max = 150)
-    private String reason;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MovementReason reason;
 
     @Size(max = 50)
     private String reference;
@@ -77,11 +79,11 @@ public class StockMovement {
         this.occurredAt = occurredAt;
     }
 
-    public String getReason() {
+    public MovementReason getReason() {
         return reason;
     }
 
-    public void setReason(String reason) {
+    public void setReason(MovementReason reason) {
         this.reason = reason;
     }
 
