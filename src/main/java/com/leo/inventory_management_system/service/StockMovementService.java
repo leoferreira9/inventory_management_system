@@ -3,14 +3,13 @@ package com.leo.inventory_management_system.service;
 import com.leo.inventory_management_system.dto.stockMovement.StockMovementRequest;
 import com.leo.inventory_management_system.dto.stockMovement.StockMovementResponse;
 import com.leo.inventory_management_system.entity.Product;
+import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.entity.StockMovement;
 import com.leo.inventory_management_system.enums.MovementReason;
 import com.leo.inventory_management_system.enums.MovementType;
-import com.leo.inventory_management_system.exception.EntityNotFound;
-import com.leo.inventory_management_system.exception.InvalidDate;
-import com.leo.inventory_management_system.exception.InvalidStockMovementReason;
-import com.leo.inventory_management_system.exception.QuantityUnavailable;
+import com.leo.inventory_management_system.exception.*;
 import com.leo.inventory_management_system.mapper.StockMovementMapper;
+import com.leo.inventory_management_system.repository.StockLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +22,15 @@ public class StockMovementService {
     private final StockMovementRepository repository;
     private final StockMovementMapper mapper;
     private final ProductService productService;
+    private final StockLotService stockLotService;
+    private final StockLotRepository stockLotRepository;
 
-    public StockMovementService(StockMovementRepository repository, StockMovementMapper mapper, ProductService productService){
+    public StockMovementService(StockMovementRepository repository, StockMovementMapper mapper, ProductService productService, StockLotService stockLotService, StockLotRepository stockLotRepository){
         this.repository = repository;
         this.mapper = mapper;
         this.productService = productService;
+        this.stockLotService = stockLotService;
+        this.stockLotRepository = stockLotRepository;
     }
 
     public StockMovement findStockMovementOrThrow(Long id){
@@ -40,6 +43,28 @@ public class StockMovementService {
             MovementType.ADJUST, EnumSet.of(MovementReason.ADJUSTMENT_IN, MovementReason.ADJUSTMENT_OUT)
     );
 
+    public void processEntry(StockMovementRequest request){
+        StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+        if(!stockLotExists.getProduct().getId().equals(request.getProductId())) throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
+        increaseStock(request.getQuantity(), stockLotExists);
+        stockLotRepository.save(stockLotExists);
+    }
+
+    public void processExit(StockMovementRequest request){
+        StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+        if(!stockLotExists.getProduct().getId().equals(request.getProductId())) throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
+        decreaseStock(request.getQuantity(), stockLotExists);
+        stockLotRepository.save(stockLotExists);
+    }
+
+    public void increaseStock(int quantity, StockLot stockLot){
+        stockLot.setQuantity(stockLot.getQuantity() + quantity);
+    }
+
+    public void decreaseStock(int quantity, StockLot stockLot){
+        if(quantity > stockLot.getQuantity()) throw new QuantityUnavailable("Insufficient stock. Available quantity: " + stockLot.getQuantity());
+        stockLot.setQuantity(stockLot.getQuantity() - quantity);
+    }
 
     public StockMovementResponse create(StockMovementRequest request){
         Product product = productService.findProductOrThrow(request.getProductId());
@@ -48,15 +73,19 @@ public class StockMovementService {
         if(request.getOccurredAt().isAfter(LocalDateTime.now())) throw new InvalidDate("The date the event occurred cannot be later than the current date");
 
         Set<MovementReason> allowedReasons = map.get(request.getType());
-
         StockMovement stockMovement = mapper.toEntity(request);
 
         if(allowedReasons == null || !allowedReasons.contains(request.getReason()))
             throw new InvalidStockMovementReason("The type of movement does not correspond to the reason: " + request.getType() + " -> " + allowedReasons);
 
-
         stockMovement.setProduct(product);
         stockMovement.setCreatedAt(LocalDateTime.now());
+
+        if(request.getType().equals(MovementType.IN)){
+            processEntry(request);
+        } else if (request.getType().equals(MovementType.OUT)){
+            processExit(request);
+        }
 
         StockMovement savedStockMovement = repository.save(stockMovement);
 

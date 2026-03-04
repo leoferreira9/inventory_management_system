@@ -27,6 +27,8 @@ public class StockMovementRequest {
 
     private String reference;
 
+    private Long stockLotId;
+
     public StockMovementRequest(){}
 
     public MovementType getType() {
@@ -75,5 +77,13 @@ public class StockMovementRequest {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public Long getStockLotId() {
+        return stockLotId;
+    }
+
+    public void setStockLotId(Long stockLotId) {
+        this.stockLotId = stockLotId;
     }
 }

@@ -26,7 +26,7 @@ public class StockLotService {
         this.productService = productService;
     }
 
-    private StockLot findStockLotOrThrow(Long id){
+    public StockLot findStockLotOrThrow(Long id){
         return repository.findById(id).orElseThrow(() -> new EntityNotFound("Stock lot not found with ID: " + id));
     }
 
