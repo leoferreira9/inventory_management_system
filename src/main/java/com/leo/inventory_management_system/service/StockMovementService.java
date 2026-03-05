@@ -69,6 +69,7 @@ public class StockMovementService {
     public StockMovementResponse create(StockMovementRequest request){
         Product product = productService.findProductOrThrow(request.getProductId());
 
+        if(!product.isActive()) throw new DisabledProduct("Failure in stock movement, product disabled.");
         if(request.getQuantity() <= 0) throw new QuantityUnavailable("Stock movement quantity must be greater than zero");
         if(request.getOccurredAt().isAfter(LocalDateTime.now())) throw new InvalidDate("The date the event occurred cannot be later than the current date");
 
