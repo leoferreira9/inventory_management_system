@@ -28,7 +28,16 @@ create table stock_movements (
     product_id BIGINT NOT NULL,
     quantity INT NOT NULL CHECK(quantity > 0),
     occurred_at DATETIME NOT NULL,
-    reason VARCHAR(150),
+    reason ENUM (
+        "PURCHASE",
+        "INITIAL_STOCK",
+        "RETURN_FROM_CLIENT",
+        "SALE",
+        "EXPIRED",
+        "DAMAGE",
+        "ADJUSTMENT_IN",
+        "ADJUSTMENT_OUT"
+    ) NOT NULL,
     reference VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id)
