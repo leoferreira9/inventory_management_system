@@ -27,6 +27,7 @@ public class StockMovementRequest {
 
     private String reference;
 
+    @NotNull
     private Long stockLotId;
 
     public StockMovementRequest(){}
