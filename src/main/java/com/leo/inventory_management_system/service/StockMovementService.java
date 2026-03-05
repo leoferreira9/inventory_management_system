@@ -83,18 +83,17 @@ public class StockMovementService {
         stockMovement.setCreatedAt(LocalDateTime.now());
 
         StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+        MovementType type = request.getType();
 
-        if(request.getType().equals(MovementType.ADJUST)){
+        if(type.equals(MovementType.ADJUST)){
             if(request.getReason().equals(MovementReason.ADJUSTMENT_IN)){
-                increaseStock(request.getQuantity(), stockLotExists);
+                processEntry(request, stockLotExists);
             } else {
-                decreaseStock(request.getQuantity(), stockLotExists);
+                processExit(request, stockLotExists);
             }
-        }
-
-        if(request.getType().equals(MovementType.IN)){
+        } else if(type.equals(MovementType.IN)){
             processEntry(request, stockLotExists);
-        } else if (request.getType().equals(MovementType.OUT)){
+        } else if (type.equals(MovementType.OUT)){
             processExit(request, stockLotExists);
         }
 
