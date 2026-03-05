@@ -5,6 +5,7 @@ import com.leo.inventory_management_system.dto.product.ProductResponse;
 import com.leo.inventory_management_system.dto.product.UpdateProductRequest;
 import com.leo.inventory_management_system.dto.product.UpdateProductStatusRequest;
 import com.leo.inventory_management_system.entity.Product;
+import com.leo.inventory_management_system.exception.DuplicatedData;
 import com.leo.inventory_management_system.exception.EntityNotFound;
 import com.leo.inventory_management_system.mapper.ProductMapper;
 import com.leo.inventory_management_system.repository.ProductRepository;
@@ -29,6 +30,9 @@ public class ProductService {
     }
 
     public ProductResponse create(ProductRequest request){
+        Product productSkuAlreadyExists = repository.findProductBySku(request.getSku());
+        if(productSkuAlreadyExists != null) throw new DuplicatedData("A product already exists with this SKU: " + request.getSku());
+
         Product product = mapper.toEntity(request);
         product.setActive(true);
         product.setCreatedAt(LocalDateTime.now());
@@ -48,6 +52,9 @@ public class ProductService {
 
     public ProductResponse update(Long id, UpdateProductRequest request){
         Product productExists = findProductOrThrow(id);
+
+        Product productSkuAlreadyExists = repository.findProductBySku(request.getSku());
+        if(productSkuAlreadyExists != null && !productSkuAlreadyExists.getId().equals(id)) throw new DuplicatedData("A product already exists with this SKU: " + request.getSku());
 
         productExists.setName(request.getName());
         productExists.setDescription(request.getDescription());
