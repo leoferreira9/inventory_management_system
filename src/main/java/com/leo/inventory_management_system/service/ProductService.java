@@ -5,10 +5,13 @@ import com.leo.inventory_management_system.dto.product.ProductResponse;
 import com.leo.inventory_management_system.dto.product.UpdateProductRequest;
 import com.leo.inventory_management_system.dto.product.UpdateProductStatusRequest;
 import com.leo.inventory_management_system.entity.Product;
+import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.exception.DuplicatedData;
 import com.leo.inventory_management_system.exception.EntityNotFound;
+import com.leo.inventory_management_system.exception.FailedDisablingProduct;
 import com.leo.inventory_management_system.mapper.ProductMapper;
 import com.leo.inventory_management_system.repository.ProductRepository;
+import com.leo.inventory_management_system.repository.StockLotRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,10 +22,12 @@ public class ProductService {
 
     private final ProductMapper mapper;
     private final ProductRepository repository;
+    private final StockLotRepository stockLotRepository;
 
-    public ProductService(ProductMapper mapper, ProductRepository repository){
+    public ProductService(ProductMapper mapper, ProductRepository repository, StockLotRepository stockLotRepository){
         this.mapper = mapper;
         this.repository = repository;
+        this.stockLotRepository = stockLotRepository;
     }
 
     public Product findProductOrThrow(Long id){
@@ -68,6 +73,9 @@ public class ProductService {
 
     public ProductResponse updateStatus(Long id, UpdateProductStatusRequest request){
         Product productExists = findProductOrThrow(id);
+        StockLot stockLotExists = stockLotRepository.findByProductId(id);
+
+        if(stockLotExists != null && stockLotExists.getQuantity() > 0 && request.getActive().equals(false)) throw new FailedDisablingProduct("Failure to disable product, it contains stock");
 
         productExists.setActive(request.getActive());
         productExists.setUpdatedAt(LocalDateTime.now());
