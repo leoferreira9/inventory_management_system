@@ -73,9 +73,9 @@ public class ProductService {
 
     public ProductResponse updateStatus(Long id, UpdateProductStatusRequest request){
         Product productExists = findProductOrThrow(id);
-        StockLot stockLotExists = stockLotRepository.findByProductId(id);
 
-        if(stockLotExists != null && stockLotExists.getQuantity() > 0 && request.getActive().equals(false)) throw new FailedDisablingProduct("Failure to disable product, it contains stock");
+        int productStockQuantity = stockLotRepository.findAllByProductId(id).stream().map(StockLot::getQuantity).reduce(0, Integer::sum);
+        if(productStockQuantity > 0 && !request.getActive()) throw new FailedDisablingProduct("Failure to disable product, it contains " + productStockQuantity + " units in stock");
 
         productExists.setActive(request.getActive());
         productExists.setUpdatedAt(LocalDateTime.now());
