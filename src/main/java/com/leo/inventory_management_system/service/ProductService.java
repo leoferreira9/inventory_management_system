@@ -57,8 +57,15 @@ public class ProductService {
         return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
-    public Page<ProductResponse> searchProducts(Pageable pageable){
-        return repository.findAll(pageable).map(mapper::toDto);
+    public Page<ProductResponse> searchProducts(String search, Pageable pageable){
+        Page<Product> pageableResult;
+        if(search == null || search.isEmpty()){
+            pageableResult = repository.findAll(pageable);
+        } else {
+            pageableResult = repository.findByNameContainingIgnoreCaseOrSkuContainingIgnoreCase(search, search, pageable);
+        }
+
+        return pageableResult.map(mapper::toDto);
     }
 
     public ProductResponse update(Long id, UpdateProductRequest request){

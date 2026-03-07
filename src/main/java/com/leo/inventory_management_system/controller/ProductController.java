@@ -43,6 +43,11 @@ public class ProductController {
         return ResponseEntity.ok().body(service.findAll());
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProductResponse>> searchProducts(@RequestParam(required = false) String search, Pageable pageable){
+        return ResponseEntity.ok().body(service.searchProducts(search, pageable));
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<ProductResponse> updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateProductStatusRequest request){
         return ResponseEntity.ok().body(service.updateStatus(id, request));
@@ -59,8 +64,4 @@ public class ProductController {
         return ResponseEntity.ok().body(service.findById(id));
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<Page<ProductResponse>> searchProducts(Pageable pageable){
-        return ResponseEntity.ok().body(service.searchProducts(pageable));
-    }
 }
