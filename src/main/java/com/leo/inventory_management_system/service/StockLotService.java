@@ -5,11 +5,13 @@ import com.leo.inventory_management_system.dto.stockLot.StockLotResponse;
 import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.exception.EntityNotFound;
+import com.leo.inventory_management_system.exception.InvalidDate;
 import com.leo.inventory_management_system.exception.QuantityUnavailable;
 import com.leo.inventory_management_system.mapper.StockLotMapper;
 import com.leo.inventory_management_system.repository.StockLotRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class StockLotService {
         Product productExists = productService.findProductOrThrow(request.getProductId());
 
         if(request.getQuantity() < 0) throw new QuantityUnavailable("Stock lot quantity must be greater than or equal to zero");
+        if(request.getExpiryDate().isBefore(LocalDate.now()) || request.getExpiryDate().isEqual(LocalDate.now()))
+            throw new InvalidDate("Product could not be added to stock. Expiration date has passed.");
 
         StockLot stockLot = mapper.toEntity(request);
         stockLot.setProduct(productExists);
