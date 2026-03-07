@@ -12,6 +12,8 @@ import com.leo.inventory_management_system.exception.FailedDisablingProduct;
 import com.leo.inventory_management_system.mapper.ProductMapper;
 import com.leo.inventory_management_system.repository.ProductRepository;
 import com.leo.inventory_management_system.repository.StockLotRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -53,6 +55,10 @@ public class ProductService {
 
     public List<ProductResponse> findAll(){
         return repository.findAll().stream().map(mapper::toDto).toList();
+    }
+
+    public Page<ProductResponse> searchProducts(Pageable pageable){
+        return repository.findAll(pageable).map(mapper::toDto);
     }
 
     public ProductResponse update(Long id, UpdateProductRequest request){

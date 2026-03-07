@@ -6,6 +6,8 @@ import com.leo.inventory_management_system.dto.product.UpdateProductRequest;
 import com.leo.inventory_management_system.dto.product.UpdateProductStatusRequest;
 import com.leo.inventory_management_system.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -55,5 +57,10 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id){
         return ResponseEntity.ok().body(service.findById(id));
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProductResponse>> searchProducts(Pageable pageable){
+        return ResponseEntity.ok().body(service.searchProducts(pageable));
     }
 }
