@@ -1,9 +1,6 @@
 package com.leo.inventory_management_system.service;
 
-import com.leo.inventory_management_system.dto.product.ProductRequest;
-import com.leo.inventory_management_system.dto.product.ProductResponse;
-import com.leo.inventory_management_system.dto.product.UpdateProductRequest;
-import com.leo.inventory_management_system.dto.product.UpdateProductStatusRequest;
+import com.leo.inventory_management_system.dto.product.*;
 import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.exception.DuplicatedData;

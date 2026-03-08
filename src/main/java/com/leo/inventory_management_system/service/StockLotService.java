@@ -1,5 +1,6 @@
 package com.leo.inventory_management_system.service;
 
+import com.leo.inventory_management_system.dto.product.ProductStockQuantityResponse;
 import com.leo.inventory_management_system.dto.stockLot.StockLotRequest;
 import com.leo.inventory_management_system.dto.stockLot.StockLotResponse;
 import com.leo.inventory_management_system.entity.Product;
@@ -36,7 +37,7 @@ public class StockLotService {
         Product productExists = productService.findProductOrThrow(request.getProductId());
 
         if(request.getQuantity() < 0) throw new QuantityUnavailable("Stock lot quantity must be greater than or equal to zero");
-        if(!request.getExpiryDate().isAfter(LocalDate.now())) //diminuiu a lógica, commitar!!!!!!!!
+        if(!request.getExpiryDate().isAfter(LocalDate.now()))
             throw new InvalidDate("Product could not be added to stock. Expiration date has passed.");
 
         StockLot stockLot = mapper.toEntity(request);
@@ -54,5 +55,11 @@ public class StockLotService {
 
     public List<StockLotResponse> findAll(){
         return repository.findAll().stream().map(mapper::toDto).toList();
+    }
+
+    public ProductStockQuantityResponse sumProductStockQuantity (Long productId){
+        Product productExists = productService.findProductOrThrow(productId);
+        Integer stockQuantity = repository.sumProductQuantityStock(productId);
+        return new ProductStockQuantityResponse(productId,productExists.getName(), productExists.getSku(), stockQuantity);
     }
 }

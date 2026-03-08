@@ -1,5 +1,6 @@
 package com.leo.inventory_management_system.controller;
 
+import com.leo.inventory_management_system.dto.product.ProductStockQuantityResponse;
 import com.leo.inventory_management_system.dto.stockLot.StockLotRequest;
 import com.leo.inventory_management_system.dto.stockLot.StockLotResponse;
 import com.leo.inventory_management_system.service.StockLotService;
@@ -41,5 +42,10 @@ public class StockLotController {
     @GetMapping
     public ResponseEntity<List<StockLotResponse>> findAll(){
         return ResponseEntity.ok().body(service.findAll());
+    }
+
+    @GetMapping("/{id}/stock")
+    public ProductStockQuantityResponse sumProductStockQuantity(@PathVariable Long id){
+        return service.sumProductStockQuantity(id);
     }
 }
