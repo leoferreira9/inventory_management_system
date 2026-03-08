@@ -60,6 +60,6 @@ public class StockLotService {
     public ProductStockQuantityResponse sumProductStockQuantity (Long productId){
         Product productExists = productService.findProductOrThrow(productId);
         Integer stockQuantity = repository.sumProductQuantityStock(productId);
-        return new ProductStockQuantityResponse(productId,productExists.getName(), productExists.getSku(), stockQuantity);
+        return new ProductStockQuantityResponse(productId,productExists.getName(), productExists.getSku(), stockQuantity != null ? stockQuantity : 0);
     }
 }
