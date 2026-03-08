@@ -38,6 +38,11 @@ public class StockMovementService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFound("Stock movement not found with ID: " + id));
     }
 
+    public void validateIdenticalProducts(StockMovementRequest request, StockLot stockLotExists){
+        if(!stockLotExists.getProduct().getId().equals(request.getProductId()))
+            throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
+    }
+
     private static final Map<MovementType, Set<MovementReason>> map = Map.of(
             MovementType.IN, EnumSet.of(MovementReason.PURCHASE, MovementReason.INITIAL_STOCK, MovementReason.RETURN_FROM_CLIENT),
             MovementType.OUT, EnumSet.of(MovementReason.SALE, MovementReason.EXPIRED, MovementReason.DAMAGE),
@@ -45,13 +50,13 @@ public class StockMovementService {
     );
 
     public void processEntry(StockMovementRequest request, StockLot stockLotExists){
-        if(!stockLotExists.getProduct().getId().equals(request.getProductId())) throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
+        validateIdenticalProducts(request, stockLotExists);
         increaseStock(request.getQuantity(), stockLotExists);
         stockLotRepository.save(stockLotExists);
     }
 
     public void processExit(StockMovementRequest request, StockLot stockLotExists){
-        if(!stockLotExists.getProduct().getId().equals(request.getProductId())) throw new InvalidStockLotProductMismatch("Products from Stock movement and Stock lot are different");
+        validateIdenticalProducts(request, stockLotExists);
         decreaseStock(request.getQuantity(), stockLotExists);
         stockLotRepository.save(stockLotExists);
     }
