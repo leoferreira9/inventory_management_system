@@ -36,7 +36,7 @@ public class StockLotService {
         Product productExists = productService.findProductOrThrow(request.getProductId());
 
         if(request.getQuantity() < 0) throw new QuantityUnavailable("Stock lot quantity must be greater than or equal to zero");
-        if(request.getExpiryDate().isBefore(LocalDate.now()) || request.getExpiryDate().isEqual(LocalDate.now()))
+        if(!request.getExpiryDate().isAfter(LocalDate.now())) //diminuiu a lógica, commitar!!!!!!!!
             throw new InvalidDate("Product could not be added to stock. Expiration date has passed.");
 
         StockLot stockLot = mapper.toEntity(request);
