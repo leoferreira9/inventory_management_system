@@ -85,15 +85,15 @@ public class StockMovementService {
         StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
         MovementType type = request.getType();
 
-        if(type.equals(MovementType.ADJUST)){
-            if(request.getReason().equals(MovementReason.ADJUSTMENT_IN)){
+        if(type == MovementType.ADJUST){
+            if(request.getReason() == MovementReason.ADJUSTMENT_IN){
                 processEntry(request, stockLotExists);
             } else {
                 processExit(request, stockLotExists);
             }
-        } else if(type.equals(MovementType.IN)){
+        } else if(type == MovementType.IN){
             processEntry(request, stockLotExists);
-        } else if (type.equals(MovementType.OUT)){
+        } else if (type == MovementType.OUT){
             processExit(request, stockLotExists);
         }
 
