@@ -61,8 +61,7 @@ public class StockMovementService {
         stockLotRepository.save(stockLotExists);
     }
 
-    public void processExitByStockLots(StockMovementRequest request, int quantity, StockLot stockLotExists){
-        validateIdenticalProducts(request, stockLotExists);
+    public void processExitByStockLots(int quantity, StockLot stockLotExists){
         decreaseStock(quantity, stockLotExists);
         stockLotRepository.save(stockLotExists);
     }
@@ -109,15 +108,18 @@ public class StockMovementService {
             StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
             processEntry(request, stockLotExists);
         } else if (type == MovementType.OUT){
+            int totalStock = stockLotRepository.sumProductQuantityStock(product.getId());
             int remainingQuantity = request.getQuantity();
+
+            if(totalStock < remainingQuantity) throw new QuantityUnavailable("Product with insufficient stock. Available quantity: " + totalStock);
 
             for(StockLot sl: productLots){
                 if(sl.getQuantity() >= remainingQuantity){
-                    processExitByStockLots(request, remainingQuantity, sl);
+                    processExitByStockLots(remainingQuantity, sl);
                     break;
                 } else {
                     int quantityToRemove = sl.getQuantity();
-                    processExitByStockLots(request, quantityToRemove, sl);
+                    processExitByStockLots(quantityToRemove, sl);
                     remainingQuantity -= quantityToRemove;
                 }
             }
