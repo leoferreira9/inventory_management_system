@@ -92,10 +92,7 @@ public class StockMovementService {
         stockMovement.setProduct(product);
         stockMovement.setCreatedAt(LocalDateTime.now());
 
-
         MovementType type = request.getType();
-
-        List<StockLot> productLots = stockLotRepository.findAllOrderedByExpiryDate(request.getProductId());
 
         if(type == MovementType.ADJUST){
             StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
@@ -108,7 +105,10 @@ public class StockMovementService {
             StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
             processEntry(request, stockLotExists);
         } else if (type == MovementType.OUT){
-            int totalStock = stockLotRepository.sumProductQuantityStock(product.getId());
+            List<StockLot> productLots = stockLotRepository.findAllOrderedByExpiryDate(request.getProductId());
+            Integer totalStockResult = stockLotRepository.sumProductQuantityStock(product.getId());
+
+            int totalStock = totalStockResult != null ? totalStockResult : 0;
             int remainingQuantity = request.getQuantity();
 
             if(totalStock < remainingQuantity) throw new QuantityUnavailable("Product with insufficient stock. Available quantity: " + totalStock);
