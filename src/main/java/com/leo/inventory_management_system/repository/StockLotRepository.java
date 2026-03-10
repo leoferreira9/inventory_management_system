@@ -12,4 +12,7 @@ public interface StockLotRepository extends JpaRepository<StockLot, Long> {
 
     @Query("SELECT SUM(sl.quantity) FROM StockLot sl WHERE sl.product.id = :productId")
     Integer sumProductQuantityStock(@Param("productId") Long productId);
+
+    @Query("SELECT sl FROM StockLot sl WHERE sl.product.id = :productId ORDER BY sl.expiryDate ASC")
+    List<StockLot> findAllOrderedByExpiryDate(@Param("productId") Long productId);
 }

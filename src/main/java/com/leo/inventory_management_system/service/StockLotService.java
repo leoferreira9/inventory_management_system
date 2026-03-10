@@ -7,6 +7,7 @@ import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.exception.EntityNotFound;
 import com.leo.inventory_management_system.exception.InvalidDate;
+import com.leo.inventory_management_system.exception.NullParameter;
 import com.leo.inventory_management_system.exception.QuantityUnavailable;
 import com.leo.inventory_management_system.mapper.StockLotMapper;
 import com.leo.inventory_management_system.repository.StockLotRepository;
@@ -30,6 +31,7 @@ public class StockLotService {
     }
 
     public StockLot findStockLotOrThrow(Long id){
+        if(id == null) throw new NullParameter("This action requires the Stock lot ID");
         return repository.findById(id).orElseThrow(() -> new EntityNotFound("Stock lot not found with ID: " + id));
     }
 

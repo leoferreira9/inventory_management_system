@@ -61,6 +61,12 @@ public class StockMovementService {
         stockLotRepository.save(stockLotExists);
     }
 
+    public void processExitByStockLots(StockMovementRequest request, int quantity, StockLot stockLotExists){
+        validateIdenticalProducts(request, stockLotExists);
+        decreaseStock(quantity, stockLotExists);
+        stockLotRepository.save(stockLotExists);
+    }
+
     public void increaseStock(int quantity, StockLot stockLot){
         stockLot.setQuantity(stockLot.getQuantity() + quantity);
     }
@@ -87,19 +93,34 @@ public class StockMovementService {
         stockMovement.setProduct(product);
         stockMovement.setCreatedAt(LocalDateTime.now());
 
-        StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
+
         MovementType type = request.getType();
 
+        List<StockLot> productLots = stockLotRepository.findAllOrderedByExpiryDate(request.getProductId());
+
         if(type == MovementType.ADJUST){
+            StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
             if(request.getReason() == MovementReason.ADJUSTMENT_IN){
                 processEntry(request, stockLotExists);
             } else {
                 processExit(request, stockLotExists);
             }
         } else if(type == MovementType.IN){
+            StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
             processEntry(request, stockLotExists);
         } else if (type == MovementType.OUT){
-            processExit(request, stockLotExists);
+            int remainingQuantity = request.getQuantity();
+
+            for(StockLot sl: productLots){
+                if(sl.getQuantity() >= remainingQuantity){
+                    processExitByStockLots(request, remainingQuantity, sl);
+                    break;
+                } else {
+                    int quantityToRemove = sl.getQuantity();
+                    processExitByStockLots(request, quantityToRemove, sl);
+                    remainingQuantity -= quantityToRemove;
+                }
+            }
         }
 
         StockMovement savedStockMovement = repository.save(stockMovement);
