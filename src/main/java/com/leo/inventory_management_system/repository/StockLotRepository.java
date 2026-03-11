@@ -15,4 +15,6 @@ public interface StockLotRepository extends JpaRepository<StockLot, Long> {
 
     @Query("SELECT sl FROM StockLot sl WHERE sl.product.id = :productId ORDER BY sl.expiryDate ASC")
     List<StockLot> findAllOrderedByExpiryDate(@Param("productId") Long productId);
+
+    List<StockLot> findByBatchCode(String batchCode);
 }

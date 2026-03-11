@@ -5,10 +5,7 @@ import com.leo.inventory_management_system.dto.stockLot.StockLotRequest;
 import com.leo.inventory_management_system.dto.stockLot.StockLotResponse;
 import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.entity.StockLot;
-import com.leo.inventory_management_system.exception.EntityNotFound;
-import com.leo.inventory_management_system.exception.InvalidDate;
-import com.leo.inventory_management_system.exception.NullParameter;
-import com.leo.inventory_management_system.exception.QuantityUnavailable;
+import com.leo.inventory_management_system.exception.*;
 import com.leo.inventory_management_system.mapper.StockLotMapper;
 import com.leo.inventory_management_system.repository.StockLotRepository;
 import org.springframework.stereotype.Service;
@@ -34,8 +31,19 @@ public class StockLotService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFound("Stock lot not found with ID: " + id));
     }
 
+    public void productAndBatchCodeAlreadyExists(StockLotRequest request){
+        List<StockLot> stockLotsExists = repository.findByBatchCode(request.getBatchCode());
+
+        for(StockLot sl: stockLotsExists){
+            if(sl != null && sl.getProduct().getId().equals(request.getProductId()))
+                throw new DuplicatedData("A stock lot already exists for this product with batch code: " + request.getBatchCode());
+        }
+    }
+
     public StockLotResponse create (StockLotRequest request){
         Product productExists = productService.findProductOrThrow(request.getProductId());
+
+        productAndBatchCodeAlreadyExists(request);
 
         if(request.getQuantity() < 0) throw new QuantityUnavailable("Stock lot quantity must be greater than or equal to zero");
         if(!request.getExpiryDate().isAfter(LocalDate.now()))
