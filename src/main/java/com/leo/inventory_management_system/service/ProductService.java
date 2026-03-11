@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -39,7 +38,6 @@ public class ProductService {
 
         Product product = mapper.toEntity(request);
         product.setActive(true);
-        product.setCreatedAt(LocalDateTime.now());
 
         Product savedProduct = repository.save(product);
         return mapper.toDto(savedProduct);
@@ -75,7 +73,6 @@ public class ProductService {
         productExists.setDescription(request.getDescription());
         productExists.setPrice(request.getPrice());
         productExists.setSku(request.getSku());
-        productExists.setUpdatedAt(LocalDateTime.now());
 
         Product savedProduct = repository.save(productExists);
         return mapper.toDto(savedProduct);
@@ -88,7 +85,6 @@ public class ProductService {
         if(productStockQuantity > 0 && !request.getActive()) throw new FailedDisablingProduct("Failure to disable product, it contains " + productStockQuantity + " units in stock");
 
         productExists.setActive(request.getActive());
-        productExists.setUpdatedAt(LocalDateTime.now());
 
         Product savedProduct = repository.save(productExists);
         return mapper.toDto(savedProduct);

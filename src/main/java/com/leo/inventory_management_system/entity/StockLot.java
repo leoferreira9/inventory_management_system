@@ -37,6 +37,11 @@ public class StockLot {
 
     public StockLot() {}
 
+    @PrePersist
+    public void prePersist(){
+        this.createdAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }

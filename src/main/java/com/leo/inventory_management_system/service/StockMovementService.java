@@ -106,7 +106,6 @@ public class StockMovementService {
             throw new InvalidStockMovementReason("The type of movement does not correspond to the reason: " + request.getType() + " -> " + allowedReasons);
 
         stockMovement.setProduct(product);
-        stockMovement.setCreatedAt(LocalDateTime.now());
 
         MovementType type = request.getType();
 

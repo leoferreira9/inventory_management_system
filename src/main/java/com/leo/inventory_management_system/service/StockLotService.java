@@ -14,7 +14,6 @@ import com.leo.inventory_management_system.repository.StockLotRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -44,7 +43,6 @@ public class StockLotService {
 
         StockLot stockLot = mapper.toEntity(request);
         stockLot.setProduct(productExists);
-        stockLot.setCreatedAt(LocalDateTime.now());
 
         StockLot savedStockLot = repository.save(stockLot);
         return mapper.toDto(savedStockLot);
