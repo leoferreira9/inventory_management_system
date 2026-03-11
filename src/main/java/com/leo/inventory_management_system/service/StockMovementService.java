@@ -2,14 +2,17 @@ package com.leo.inventory_management_system.service;
 
 import com.leo.inventory_management_system.dto.stockMovement.StockMovementRequest;
 import com.leo.inventory_management_system.dto.stockMovement.StockMovementResponse;
+import com.leo.inventory_management_system.dto.stockMovementLot.StockMovementLotRequest;
 import com.leo.inventory_management_system.entity.Product;
 import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.entity.StockMovement;
 import com.leo.inventory_management_system.enums.MovementReason;
 import com.leo.inventory_management_system.enums.MovementType;
 import com.leo.inventory_management_system.exception.*;
+import com.leo.inventory_management_system.mapper.StockMovementLotMapper;
 import com.leo.inventory_management_system.mapper.StockMovementMapper;
 import com.leo.inventory_management_system.repository.StockLotRepository;
+import com.leo.inventory_management_system.repository.StockMovementLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -25,13 +28,23 @@ public class StockMovementService {
     private final ProductService productService;
     private final StockLotService stockLotService;
     private final StockLotRepository stockLotRepository;
+    private final StockMovementLotRepository stockMovementLotRepository;
+    private final StockMovementLotMapper stockMovementLotMapper;
 
-    public StockMovementService(StockMovementRepository repository, StockMovementMapper mapper, ProductService productService, StockLotService stockLotService, StockLotRepository stockLotRepository){
+    public StockMovementService(StockMovementRepository repository,
+                                StockMovementMapper mapper,
+                                ProductService productService,
+                                StockLotService stockLotService,
+                                StockLotRepository stockLotRepository,
+                                StockMovementLotRepository stockMovementLotRepository,
+                                StockMovementLotMapper stockMovementLotMapper){
         this.repository = repository;
         this.mapper = mapper;
         this.productService = productService;
         this.stockLotService = stockLotService;
         this.stockLotRepository = stockLotRepository;
+        this.stockMovementLotRepository = stockMovementLotRepository;
+        this.stockMovementLotMapper = stockMovementLotMapper;
     }
 
     public StockMovement findStockMovementOrThrow(Long id){
@@ -61,9 +74,12 @@ public class StockMovementService {
         stockLotRepository.save(stockLotExists);
     }
 
-    public void processExitByStockLots(int quantity, StockLot stockLotExists){
+    public void processExitByStockLots(int quantity, StockLot stockLotExists, StockMovement savedStockMovement){
         decreaseStock(quantity, stockLotExists);
         stockLotRepository.save(stockLotExists);
+
+        StockMovementLotRequest stockMovementLotRequest = new StockMovementLotRequest(savedStockMovement.getId(),stockLotExists.getId(), quantity);
+        stockMovementLotRepository.save(stockMovementLotMapper.toEntity(stockMovementLotRequest));
     }
 
     public void increaseStock(int quantity, StockLot stockLot){
@@ -94,6 +110,8 @@ public class StockMovementService {
 
         MovementType type = request.getType();
 
+        StockMovement savedStockMovement = repository.save(stockMovement);
+
         if(type == MovementType.ADJUST){
             StockLot stockLotExists = stockLotService.findStockLotOrThrow(request.getStockLotId());
             if(request.getReason() == MovementReason.ADJUSTMENT_IN){
@@ -115,17 +133,16 @@ public class StockMovementService {
 
             for(StockLot sl: productLots){
                 if(sl.getQuantity() >= remainingQuantity){
-                    processExitByStockLots(remainingQuantity, sl);
+                    processExitByStockLots(remainingQuantity, sl, savedStockMovement);
                     break;
                 } else {
                     int quantityToRemove = sl.getQuantity();
-                    processExitByStockLots(quantityToRemove, sl);
+                    processExitByStockLots(quantityToRemove, sl, savedStockMovement);
                     remainingQuantity -= quantityToRemove;
                 }
             }
         }
 
-        StockMovement savedStockMovement = repository.save(stockMovement);
 
         return mapper.toDto(savedStockMovement);
     }

@@ -17,6 +17,12 @@ public class StockMovementLotRequest {
 
     public StockMovementLotRequest(){}
 
+    public StockMovementLotRequest(Long movementId, Long lotId, int quantity) {
+        this.movementId = movementId;
+        this.lotId = lotId;
+        this.quantity = quantity;
+    }
+
     public Long getMovementId() {
         return movementId;
     }
