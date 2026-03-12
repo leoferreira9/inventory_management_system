@@ -35,6 +35,8 @@ public class StockLotService {
     public StockLotResponse create (StockLotRequest request){
         Product productExists = productService.findProductOrThrow(request.getProductId());
 
+        if(!productExists.isActive()) throw new DisabledProduct("Failure in stock movement, product disabled.");
+
         Optional<StockLot> stockLotAlreadyExists = repository.findByProductIdAndBatchCode(request.getProductId(), request.getBatchCode());
         if(stockLotAlreadyExists.isPresent()) throw new DuplicatedData("A stock lot already exists for this product with batch code: " + request.getBatchCode());
 
