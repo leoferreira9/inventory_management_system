@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StockLotRepository extends JpaRepository<StockLot, Long> {
     List<StockLot> findAllByProductId(Long productId);
@@ -16,5 +17,5 @@ public interface StockLotRepository extends JpaRepository<StockLot, Long> {
     @Query("SELECT sl FROM StockLot sl WHERE sl.product.id = :productId ORDER BY sl.expiryDate ASC")
     List<StockLot> findAllOrderedByExpiryDate(@Param("productId") Long productId);
 
-    List<StockLot> findByBatchCode(String batchCode);
+    Optional<StockLot> findByProductIdAndBatchCode(Long productId, String batchCode);
 }
