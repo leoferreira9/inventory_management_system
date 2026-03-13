@@ -103,7 +103,7 @@ public class StockMovementService {
         StockMovement stockMovement = mapper.toEntity(request);
 
         if(allowedReasons == null || !allowedReasons.contains(request.getReason()))
-            throw new InvalidStockMovementReason("The type of movement does not correspond to the reason: " + request.getType() + " -> " + allowedReasons);
+            throw new InvalidStockMovementReason("The type of movement does not correspond to the reason: the options for (" + request.getType() + ") are -> " + allowedReasons);
 
         stockMovement.setProduct(product);
 
