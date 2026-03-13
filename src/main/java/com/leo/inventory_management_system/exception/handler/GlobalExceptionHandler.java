@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFound.class)
     public ResponseEntity<ApiErrorResponse> handleEntityNotFound(EntityNotFound ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(404, "Entity not Found", ex.getMessage(), req);
+        ApiErrorResponse error = buildApiErrorResponse(404, "Resource Not Found", ex.getMessage(), req);
         return ResponseEntity.status(404).body(error);
     }
 
@@ -82,13 +82,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest req){
 
-        List<String> erros = ex.getBindingResult()
+        List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(e -> e.getField() + ": " + e.getDefaultMessage())
                 .toList();
 
-        String message = String.join(", ", erros);
+        String message = String.join(", ", errors);
 
         ApiErrorResponse error = buildApiErrorResponse(400, "Method Argument Not Valid", message, req);
         return ResponseEntity.status(400).body(error);
@@ -96,19 +96,19 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid request body", ex.getMessage(), req);
+        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid request body", "Invalid request body", req);
         return ResponseEntity.status(400).body(error);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid parameter type", ex.getMessage(), req);
+        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid parameter type", "Invalid value for parameter: " + ex.getName(), req);
         return ResponseEntity.status(400).body(error);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleException(Exception ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(500, "Internal Server Error", ex.getMessage(), req);
+        ApiErrorResponse error = buildApiErrorResponse(500, "Internal Server Error", "Unexpected error occurred", req);
         return ResponseEntity.status(500).body(error);
     }
 }
