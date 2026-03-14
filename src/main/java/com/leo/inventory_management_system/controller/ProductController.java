@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
-@Tag(name = "Product controller", description = "Endpoints to product")
+@Tag(name = "Product controller", description = "Endpoints for managing products")
 public class ProductController {
 
     private final ProductService service;
@@ -65,7 +65,7 @@ public class ProductController {
 
     @Operation(summary = "Updates the product to active or inactive")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Product updated"),
+            @ApiResponse(responseCode = "200", description = "Product updated"),
             @ApiResponse(responseCode = "409", description = "Failed disabling product")
     })
     @PatchMapping("/{id}/status")
@@ -77,7 +77,7 @@ public class ProductController {
 
     @Operation(summary = "Updates a product")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Product updated"),
+            @ApiResponse(responseCode = "200", description = "Product updated"),
             @ApiResponse(responseCode = "409", description = "Duplicated product")
     })
     @PutMapping("/{id}")
@@ -89,7 +89,7 @@ public class ProductController {
 
 
     @Operation(summary = "Find product by ID")
-    @ApiResponse(responseCode = "201", description = "Product found")
+    @ApiResponse(responseCode = "200", description = "Product found")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@Parameter(description = "Product ID") @PathVariable Long id){
         return ResponseEntity.ok().body(service.findById(id));
