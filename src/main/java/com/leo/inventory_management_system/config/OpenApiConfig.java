@@ -13,7 +13,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Inventory Management API")
-                        .description("API for managing products, stock lots and stock movements")
+                        .description("API for managing products, stock lots and stock movements with FEFO logic")
                         .version("1.0"));
     }
 }
