@@ -31,7 +31,7 @@ public class StockLotController {
     @Operation(summary = "Create a new stock lot")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Stock lot created"),
-            @ApiResponse(responseCode = "400", description = "Disabled or expired product"),
+            @ApiResponse(responseCode = "400", description = "Disabled or expired lot"),
             @ApiResponse(responseCode = "409", description = "Duplicated stock lot or quantity unavailable"),
     })
     @PostMapping
@@ -63,7 +63,7 @@ public class StockLotController {
     @Operation(summary = "Calculates the total stock quantity of a product")
     @ApiResponse(responseCode = "200", description = "Total quantity calculated")
     @GetMapping("/{id}/stock")
-    public ProductStockQuantityResponse sumProductStockQuantity(@Parameter(description = "Product ID") @PathVariable Long id){
-        return service.sumProductStockQuantity(id);
+    public ResponseEntity<ProductStockQuantityResponse> sumProductStockQuantity(@Parameter(description = "Product ID") @PathVariable Long id){
+        return ResponseEntity.ok().body(service.sumProductStockQuantity(id));
     }
 }
