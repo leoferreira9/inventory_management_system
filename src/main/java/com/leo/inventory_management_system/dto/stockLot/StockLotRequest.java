@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 public class StockLotRequest {
 
-    @Schema(description = "Stock lot ID", example = "9")
+    @Schema(description = "Product ID", example = "9")
     @NotNull
     private Long productId;
 
