@@ -1,22 +1,27 @@
 package com.leo.inventory_management_system.dto.product;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public class UpdateProductRequest {
 
+    @Schema(description = "Product name", example = "Whey Protein 1KG")
     @NotBlank
     @Size(max = 100)
     private String name;
 
+    @Schema(description = "Product name", example = "Whey Protein 1KG")
     @Size(max = 150)
     private String description;
 
+    @Schema(description = "Product price", example = "98.30")
     @NotNull
     @DecimalMin("0.0")
     @Digits(integer = 9, fraction = 2)
     private BigDecimal price;
 
+    @Schema(description = "Internal product code", example = "SUP-WHEY-1KG")
     @NotBlank
     @Size(max = 40)
     private String sku;
