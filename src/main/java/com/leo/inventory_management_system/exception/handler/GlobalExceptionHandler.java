@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     private ApiErrorResponse buildApiErrorResponse(HttpStatus status, String message, WebRequest req){
         return new ApiErrorResponse(
                 LocalDateTime.now(),
-                status,
+                status.value(),
                 status.getReasonPhrase(),
                 message,
                 req.getDescription(false).replace("uri=", "")
