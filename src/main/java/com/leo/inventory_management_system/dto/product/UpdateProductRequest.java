@@ -11,7 +11,7 @@ public class UpdateProductRequest {
     @Size(max = 100)
     private String name;
 
-    @Schema(description = "Product name", example = "Whey Protein 1KG")
+    @Schema(description = "Product description", example = "Whey protein with 25 grams of protein per scoop")
     @Size(max = 150)
     private String description;
 
