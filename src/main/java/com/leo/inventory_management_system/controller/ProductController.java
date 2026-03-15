@@ -34,7 +34,7 @@ public class ProductController {
             @ApiResponse(responseCode = "409", description = "Duplicate product")
     })
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@Parameter(description = "Data requested to create new product") @Valid @RequestBody ProductRequest request){
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request){
 
         ProductResponse productResponse = service.create(request);
 
@@ -71,7 +71,7 @@ public class ProductController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<ProductResponse> updateStatus(
             @Parameter(description = "Product ID") @PathVariable Long id,
-            @Parameter(description = "New product status") @Valid @RequestBody UpdateProductStatusRequest request){
+            @Valid @RequestBody UpdateProductStatusRequest request){
         return ResponseEntity.ok().body(service.updateStatus(id, request));
     }
 
@@ -83,7 +83,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
             @Parameter(description = "Product ID") @PathVariable Long id,
-            @Parameter(description = "Product data to update") @Valid @RequestBody UpdateProductRequest request){
+            @Valid @RequestBody UpdateProductRequest request){
         return ResponseEntity.ok().body(service.update(id, request));
     }
 

@@ -1,6 +1,7 @@
 package com.leo.inventory_management_system.exception.handler;
 
 import com.leo.inventory_management_system.exception.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    public ApiErrorResponse buildApiErrorResponse(int status, String error, String message, WebRequest req){
+    private ApiErrorResponse buildApiErrorResponse(int status, String error, String message, WebRequest req){
         return new ApiErrorResponse(
                 LocalDateTime.now(),
                 status,
@@ -27,56 +28,56 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DisabledProduct.class)
     public ResponseEntity<ApiErrorResponse> handleDisabledProduct(DisabledProduct ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Disabled Product", ex.getMessage(), req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), "Disabled Product", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
     @ExceptionHandler(DuplicatedData.class)
     public ResponseEntity<ApiErrorResponse> handleDuplicatedData(DuplicatedData ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(409, "Duplicated Data", ex.getMessage(), req);
-        return ResponseEntity.status(409).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.CONFLICT.value(), "Duplicated Data", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(EntityNotFound.class)
     public ResponseEntity<ApiErrorResponse> handleEntityNotFound(EntityNotFound ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(404, "Resource Not Found", ex.getMessage(), req);
-        return ResponseEntity.status(404).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.NOT_FOUND.value(), "Resource Not Found", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(FailedDisablingProduct.class)
     public ResponseEntity<ApiErrorResponse> handleFailedDisablingProduct(FailedDisablingProduct ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(409, "Failed Disabling Product", ex.getMessage(), req);
-        return ResponseEntity.status(409).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.CONFLICT.value(), "Failed Disabling Product", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(InvalidDate.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidDate(InvalidDate ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid Date", ex.getMessage(), req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid Date", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(InvalidStockLotProductMismatch.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidStockLotProductMismatch(InvalidStockLotProductMismatch ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(409, "Invalid Stock Lot Product Mismatch", ex.getMessage(), req);
-        return ResponseEntity.status(409).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.CONFLICT.value(), "Invalid Stock Lot Product Mismatch", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(InvalidStockMovementReason.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidStockMovementReason(InvalidStockMovementReason ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid Stock Movement Reason", ex.getMessage(), req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid Stock Movement Reason", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(NullParameter.class)
     public ResponseEntity<ApiErrorResponse> handleNullParameter(NullParameter ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Null Parameter", ex.getMessage(), req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Null Parameter", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(QuantityUnavailable.class)
     public ResponseEntity<ApiErrorResponse> handleQuantityUnavailable(QuantityUnavailable ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(409, "Quantity Unavailable", ex.getMessage(), req);
-        return ResponseEntity.status(409).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.CONFLICT.value(), "Quantity Unavailable", ex.getMessage(), req);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -90,25 +91,25 @@ public class GlobalExceptionHandler {
 
         String message = String.join(", ", errors);
 
-        ApiErrorResponse error = buildApiErrorResponse(400, "Method Argument Not Valid", message, req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Method Argument Not Valid", message, req);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid request body", "Invalid request body", req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid request body", "Invalid request body", req);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(400, "Invalid parameter type", "Invalid value for parameter: " + ex.getName(), req);
-        return ResponseEntity.status(400).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.BAD_REQUEST.value(), "Invalid parameter type", "Invalid value for parameter: " + ex.getName(), req);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleException(Exception ex, WebRequest req){
-        ApiErrorResponse error = buildApiErrorResponse(500, "Internal Server Error", "Unexpected error occurred", req);
-        return ResponseEntity.status(500).body(error);
+        ApiErrorResponse error = buildApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error", "Unexpected error occurred", req);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 }

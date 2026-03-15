@@ -35,7 +35,7 @@ public class StockLotController {
             @ApiResponse(responseCode = "409", description = "Duplicated stock lot or quantity unavailable"),
     })
     @PostMapping
-    public ResponseEntity<StockLotResponse> create(@Parameter(description = "Data requested to create new stock lot") @Valid @RequestBody StockLotRequest request){
+    public ResponseEntity<StockLotResponse> create(@Valid @RequestBody StockLotRequest request){
         StockLotResponse response = service.create(request);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
