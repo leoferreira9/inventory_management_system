@@ -2,6 +2,8 @@ package com.leo.inventory_management_system.controller;
 
 import com.leo.inventory_management_system.dto.stockMovement.StockMovementRequest;
 import com.leo.inventory_management_system.dto.stockMovement.StockMovementResponse;
+import com.leo.inventory_management_system.enums.MovementReason;
+import com.leo.inventory_management_system.enums.MovementType;
 import com.leo.inventory_management_system.service.StockMovementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,11 +11,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -58,6 +63,21 @@ public class StockMovementController {
     @GetMapping
     public ResponseEntity<List<StockMovementResponse>> findAll(){
         return ResponseEntity.ok().body(service.findAll());
+    }
+
+    @Operation(summary = "Find filtered Stock movements")
+    @ApiResponse(responseCode = "200", description = "Filtered stock movements")
+    @GetMapping("/filters")
+    public ResponseEntity<Page<StockMovementResponse>> findWithFilters(
+           @Parameter(description = "Product ID") @RequestParam(required = false) Long productId,
+           @Parameter(description = "Product name")  @RequestParam(required = false) String productName,
+           @Parameter(description = "Stock movement type")  @RequestParam(required = false) MovementType type,
+           @Parameter(description = "Stock movement reason")  @RequestParam(required = false) MovementReason reason,
+           @Parameter(description = "Stock movement start date")  @RequestParam(required = false) LocalDate startDate,
+           @Parameter(description = "Stock movement end date")  @RequestParam(required = false) LocalDate endDate,
+           Pageable pageable
+    ){
+        return ResponseEntity.ok().body(service.findWithFilters(productId, productName,type, reason, startDate, endDate, pageable));
     }
 }
 

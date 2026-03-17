@@ -15,8 +15,11 @@ import com.leo.inventory_management_system.repository.StockLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -153,5 +156,20 @@ public class StockMovementService {
 
     public List<StockMovementResponse> findAll(){
         return repository.findAll().stream().map(mapper::toDto).toList();
+    }
+
+    public Page<StockMovementResponse> findWithFilters(Long productId,
+                                                       String productName,
+                                                       MovementType type,
+                                                       MovementReason reason,
+                                                       LocalDate startDate,
+                                                       LocalDate endDate,
+                                                       Pageable pageable
+    ){
+        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
+
+        Page<StockMovement> page = repository.findWithFilters(productId, productName, type, reason, startDateTime, endDateTime, pageable);
+        return page.map(mapper::toDto);
     }
 }
