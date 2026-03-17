@@ -67,7 +67,7 @@ public class StockMovementController {
 
     @Operation(summary = "Find filtered Stock movements")
     @ApiResponse(responseCode = "200", description = "Filtered stock movements")
-    @GetMapping("/filters")
+    @GetMapping("/search")
     public ResponseEntity<Page<StockMovementResponse>> findWithFilters(
            @Parameter(description = "Product ID") @RequestParam(required = false) Long productId,
            @Parameter(description = "Product name")  @RequestParam(required = false) String productName,

@@ -20,6 +20,7 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, Lo
             AND (:reason IS NULL OR sm.reason = :reason)
             AND (:startDate IS NULL OR sm.occurredAt >= :startDate)
             AND (:endDate IS NULL OR sm.occurredAt <= :endDate)
+            ORDER BY sm.occurredAt DESC
             """)
     Page<StockMovement> findWithFilters(Long productId,
                                         String productName,
