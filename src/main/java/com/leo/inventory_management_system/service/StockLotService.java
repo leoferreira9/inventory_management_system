@@ -8,6 +8,8 @@ import com.leo.inventory_management_system.entity.StockLot;
 import com.leo.inventory_management_system.exception.*;
 import com.leo.inventory_management_system.mapper.StockLotMapper;
 import com.leo.inventory_management_system.repository.StockLotRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +23,8 @@ public class StockLotService {
     private final StockLotRepository repository;
     private final ProductService productService;
 
+    private static final Logger log = LoggerFactory.getLogger(StockLotService.class);
+
     public StockLotService(StockLotMapper mapper, StockLotRepository repository, ProductService productService){
         this.mapper = mapper;
         this.repository = repository;
@@ -33,9 +37,11 @@ public class StockLotService {
     }
 
     public StockLotResponse create (StockLotRequest request){
+        log.info("Creating stock lot with batchCode: {}", request.getBatchCode());
+
         Product productExists = productService.findProductOrThrow(request.getProductId());
 
-        if(!productExists.isActive()) throw new DisabledProduct("Failure in stock movement, product disabled.");
+        if(!productExists.isActive()) throw new DisabledProduct("Failure creating stock lot, product disabled.");
 
         Optional<StockLot> stockLotAlreadyExists = repository.findByProductIdAndBatchCode(request.getProductId(), request.getBatchCode());
         if(stockLotAlreadyExists.isPresent()) throw new DuplicatedData("A stock lot already exists for this product with batch code: " + request.getBatchCode());
@@ -48,21 +54,33 @@ public class StockLotService {
         stockLot.setProduct(productExists);
 
         StockLot savedStockLot = repository.save(stockLot);
+
+        log.info("Stock lot created with ID: {}", savedStockLot.getId());
         return mapper.toDto(savedStockLot);
     }
 
     public StockLotResponse findById(Long id){
+        log.info("Finding stock lot with ID: {}", id);
+
         StockLot stockLotExists = findStockLotOrThrow(id);
+
+        log.info("Stock lot found with ID: {}", id);
         return mapper.toDto(stockLotExists);
     }
 
     public List<StockLotResponse> findAll(){
-        return repository.findAll().stream().map(mapper::toDto).toList();
+        List<StockLotResponse> stockLots = repository.findAll().stream().map(mapper::toDto).toList();
+        log.info("Found {} stock lots", stockLots.size());
+        return stockLots;
     }
 
     public ProductStockQuantityResponse sumProductStockQuantity (Long productId){
+        log.info("Calculating total stock for product ID: {}", productId);
+
         Product productExists = productService.findProductOrThrow(productId);
         Integer stockQuantity = repository.sumProductQuantityStock(productId);
+
+        log.info("Total stock for product ID {}: {}", productId, stockQuantity);
         return new ProductStockQuantityResponse(productId,productExists.getName(), productExists.getSku(), stockQuantity != null ? stockQuantity : 0);
     }
 }

@@ -15,6 +15,8 @@ import com.leo.inventory_management_system.repository.StockLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementLotRepository;
 import com.leo.inventory_management_system.repository.StockMovementRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,8 @@ public class StockMovementService {
     private final StockLotRepository stockLotRepository;
     private final StockMovementLotRepository stockMovementLotRepository;
     private final StockMovementLotMapper stockMovementLotMapper;
+
+    private static final Logger log = LoggerFactory.getLogger(StockMovementService.class);
 
     public StockMovementService(StockMovementRepository repository,
                                 StockMovementMapper mapper,
@@ -96,6 +100,8 @@ public class StockMovementService {
 
     @Transactional
     public StockMovementResponse create(StockMovementRequest request){
+        log.info("Creating stock movement. Type: {}, Product ID: {}, Quantity: {}", request.getType(), request.getProductId(), request.getQuantity());
+
         Product product = productService.findProductOrThrow(request.getProductId());
 
         if(!product.isActive()) throw new DisabledProduct("Failure in stock movement, product disabled.");
@@ -133,29 +139,38 @@ public class StockMovementService {
 
             if(totalStock < remainingQuantity) throw new QuantityUnavailable("Product with insufficient stock. Available quantity: " + totalStock);
 
+            log.info("Processing OUT movement using FEFO. Product ID: {}, Total quantity: {}", product.getId(), request.getQuantity());
             for(StockLot sl: productLots){
                 if(sl.getQuantity() >= remainingQuantity){
+                    log.debug("Consuming {} units from stock lot ID: {}", remainingQuantity, sl.getId());
                     processExitByStockLots(remainingQuantity, sl, savedStockMovement);
                     break;
                 } else {
                     int quantityToRemove = sl.getQuantity();
+                    log.debug("Consuming {} units from stock lot ID: {}",quantityToRemove, sl.getId());
                     processExitByStockLots(quantityToRemove, sl, savedStockMovement);
                     remainingQuantity -= quantityToRemove;
                 }
             }
         }
 
-
+        log.info("Stock movement processed successfully. ID: {}", savedStockMovement.getId());
         return mapper.toDto(savedStockMovement);
     }
 
     public StockMovementResponse findById(Long id){
+        log.info("Finding stock movement by ID: {}", id);
+
         StockMovement stockMovementExists = findStockMovementOrThrow(id);
+
+        log.info("Stock movement found. ID: {}", id);
         return mapper.toDto(stockMovementExists);
     }
 
     public List<StockMovementResponse> findAll(){
-        return repository.findAll().stream().map(mapper::toDto).toList();
+        List<StockMovementResponse> stockMovements = repository.findAll().stream().map(mapper::toDto).toList();
+        log.info("Found {} stock movements", stockMovements.size());
+        return stockMovements;
     }
 
     public Page<StockMovementResponse> findWithFilters(Long productId,
@@ -166,10 +181,13 @@ public class StockMovementService {
                                                        LocalDate endDate,
                                                        Pageable pageable
     ){
+        log.info("Filtering stock movements. ProductId: {}, Type: {}, Reason: {}", productId, type, reason);
+
         LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
         LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
 
         Page<StockMovement> page = repository.findWithFilters(productId, productName, type, reason, startDateTime, endDateTime, pageable);
+        log.info("Number of filtered stock movements found: {}", page.getTotalElements());
         return page.map(mapper::toDto);
     }
 }
