@@ -14,7 +14,6 @@ REST API for inventory management with product control, stock lots, and stock mo
 - MapStruct
 - Bean Validation
 - SpringDoc OpenAPI (Swagger)
-- Maven
 
 ---
 
