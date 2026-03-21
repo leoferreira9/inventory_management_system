@@ -1,0 +1,35 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3307:3306"
+    networks:
+      - app-net
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+
+  spring-app:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - app-net
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/${MYSQL_DATABASE}?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - mysqldb
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  app-net:
+    driver: bridge
