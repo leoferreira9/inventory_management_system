@@ -14,6 +14,8 @@ REST API for inventory management with product control, stock lots, and stock mo
 - MapStruct
 - Bean Validation
 - SpringDoc OpenAPI (Swagger)
+- Docker
+- Docker Compose
 
 ---
 
@@ -152,6 +154,32 @@ spring.datasource.password=your_password
 Flyway will automatically create all tables on first run.
 
 ---
+
+### Running with Docker
+
+1. Clone the repository:
+```bash
+git clone https://github.com/leoferreira9/inventory_management_system.git
+cd inventory_management_system
+```
+
+2. Copy the example env file and fill in your credentials:
+```bash
+cp .env.example .env
+```
+
+3. Edit `.env` with your database name and password:
+```
+MYSQL_DATABASE=database_name
+MYSQL_ROOT_PASSWORD=your_password
+```
+
+4. Run with Docker Compose:
+```bash
+docker compose up --build -d
+```
+
+Access the Swagger UI at `http://localhost:8080/swagger-ui/index.html`
 
 ## API Documentation
 
