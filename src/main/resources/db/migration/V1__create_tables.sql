@@ -24,19 +24,19 @@ CREATE INDEX idx_stock_lots_product_expiry ON stock_lots(product_id, expiry_date
 
 create table stock_movements (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    type ENUM("IN", "OUT", "ADJUST") NOT NULL,
+    type ENUM('IN', 'OUT', 'ADJUST') NOT NULL,
     product_id BIGINT NOT NULL,
     quantity INT NOT NULL CHECK(quantity > 0),
     occurred_at DATETIME NOT NULL,
     reason ENUM (
-        "PURCHASE",
-        "INITIAL_STOCK",
-        "RETURN_FROM_CLIENT",
-        "SALE",
-        "EXPIRED",
-        "DAMAGE",
-        "ADJUSTMENT_IN",
-        "ADJUSTMENT_OUT"
+        'PURCHASE',
+        'INITIAL_STOCK',
+        'RETURN_FROM_CLIENT',
+        'SALE',
+        'EXPIRED',
+        'DAMAGE',
+        'ADJUSTMENT_IN',
+        'ADJUSTMENT_OUT'
     ) NOT NULL,
     reference VARCHAR(50),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
